@@ -2,6 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@layer base {
+  :root {
+    --color-primary: 229 231 235; /* slate-200 RGB channels */
+  }
+  .dark {
+    --color-primary: 30 41 59; /* slate-800 RGB channels */
+  }
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

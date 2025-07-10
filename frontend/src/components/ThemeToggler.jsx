@@ -4,15 +4,14 @@ export default function ThemeToggler() {
   const { darkMode, toggleDarkMode } = useTheme();
 
   return (
-    
     <button
       onClick={toggleDarkMode}
-      className="flex h-8 w-14 items-center rounded-full  bg-slate-200 p-1 shadow cursor-pointer transition-colors duration-300 focus:ring-0 dark:bg-slate-800  hover:shadow-slate-700/50 dark:hover:shadow-slate-200/50"
+      className="flex h-8 w-14 cursor-pointer items-center rounded-full bg-slate-200 p-1 shadow transition-colors duration-300 hover:shadow-slate-700/50 focus:ring-0 dark:bg-slate-800 dark:hover:shadow-slate-200/50"
       aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
     >
       {/* Button on the track */}
       <div
-        className={`flex h-6 w-6 transform items-center justify-center rounded-full  bg-white shadow-md transition-transform duration-300 dark:bg-slate-700 ${
+        className={`flex h-6 w-6 transform items-center justify-center rounded-full bg-white shadow-md transition-transform duration-300 dark:bg-slate-700 ${
           darkMode ? "translate-x-6" : "translate-x-0"
         }`}
       >

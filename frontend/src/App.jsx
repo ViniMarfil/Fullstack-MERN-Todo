@@ -1,4 +1,5 @@
 import ThemeToggler from "./components/ThemeToggler";
+import TodosContainer from "./components/Todos/TodosContainer";
 
 function App() {
   return (
@@ -7,7 +8,7 @@ function App() {
         <div className="absolute right-4 top-4">
           <ThemeToggler />
         </div>
-        <h1 className="text-4xl font-bold">Hi my man</h1>
+        <TodosContainer />
       </div>
     </>
   );
