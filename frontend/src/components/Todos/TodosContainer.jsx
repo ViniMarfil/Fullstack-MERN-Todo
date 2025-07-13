@@ -47,19 +47,20 @@ export default function TodosContainer() {
         <p>Are you sure you want to delete this todo?</p>
         <div className="mt-4 flex justify-end">
           <button
-            className="mr-2 rounded bg-red-500 px-4 py-2 text-white"
+            className="btn-warning mr-2"
             onClick={confirmDeleteTodoHandler}
           >
             Delete
           </button>
           <button
-            className="rounded bg-gray-300 px-4 py-2"
+            className="btn-neutral"
             onClick={cancelDeleteHandler}
           >
             Cancel
           </button>
         </div>
       </Modal>
+
       <div className="w-full max-w-md rounded-lg border border-white/30 bg-slate-200/50 p-6 shadow-lg backdrop-blur-3xl dark:border-white/10 dark:bg-slate-800/50">
         <h2 className="mb-4 text-center text-2xl font-bold">Todos</h2>
         <form onSubmit={addTodoHandler} className="mb-4 flex gap-2">
@@ -69,10 +70,8 @@ export default function TodosContainer() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Add a todo..."
           />
-          <button
-            type="submit"
-            className="active:scale-98 group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-gradient-to-br from-violet-500 via-violet-600 to-violet-700 px-4 py-2 text-slate-100 shadow-2xl shadow-violet-500/20 backdrop-blur-md hover:from-violet-400 hover:via-violet-500 hover:to-violet-600 focus:outline-none active:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
-          >
+
+          <button type="submit" className="btn-primary">
             <span>Add</span>
           </button>
         </form>
@@ -99,7 +98,7 @@ export default function TodosContainer() {
 function EditButton({ onClick }) {
   return (
     <button
-      className="flex h-8 w-8 cursor-pointer items-center justify-center border-l border-r border-white/40 bg-gradient-to-br from-green-400 via-green-500 to-green-600 text-xs font-bold text-slate-100 shadow hover:from-green-500 hover:via-green-600 hover:to-green-700 focus:outline-none"
+      className="flex h-8 w-8 cursor-pointer items-center justify-center border-l border-r border-white/40 bg-gradient-to-b from-green-400 via-green-500 to-green-600 text-xs font-bold text-slate-100 shadow hover:from-green-500 hover:via-green-600 hover:to-green-700 focus:outline-none"
       title="Edit"
       onClick={onClick}
     >
@@ -122,11 +121,12 @@ function EditButton({ onClick }) {
     </button>
   );
 }
+
 function DeleteButton({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-r-lg bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-xs font-bold text-slate-100 shadow hover:from-red-600 hover:via-red-700 hover:to-red-800 focus:outline-none"
+      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-r-lg bg-gradient-to-b from-red-500 via-red-600 to-red-700 text-xs font-bold text-slate-100 shadow hover:from-red-600 hover:via-red-700 hover:to-red-800 focus:outline-none"
       title="Remove"
     >
       <span className="flex h-6 w-6 items-center justify-center rounded-full">

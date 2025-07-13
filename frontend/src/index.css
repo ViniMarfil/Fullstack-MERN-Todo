@@ -11,6 +11,18 @@
   }
 }
 
+.btn-primary {
+  @apply active:scale-98 relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-gradient-to-b from-violet-500 via-violet-600 to-violet-700 px-4 py-2 font-semibold text-slate-100 shadow-2xl shadow-violet-500/20 backdrop-blur-md hover:from-violet-600 hover:via-violet-700 hover:to-violet-800  focus:outline-none active:shadow-md disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+
+.btn-warning {
+  @apply active:scale-98 relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-gradient-to-b from-red-500 via-red-500 to-red-700 px-4 py-2 font-semibold text-slate-100 shadow-2xl shadow-violet-500/20 backdrop-blur-md hover:from-red-600 hover:via-red-700 hover:to-red-800  focus:outline-none active:shadow-md disabled:cursor-not-allowed disabled:opacity-50;
+}
+.btn-neutral {
+  @apply active:scale-98 relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-gray-200 px-4 py-2 font-semibold text-gray-700 shadow-2xl shadow-gray-300/20 backdrop-blur-md hover:bg-gray-300 focus:outline-none active:shadow-md disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-700 dark:text-gray-100 dark:shadow-slate-700/20 dark:hover:bg-slate-800;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
