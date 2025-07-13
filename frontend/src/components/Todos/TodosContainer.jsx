@@ -1,17 +1,23 @@
 import { useState } from "react";
 import Modal from "../Modal";
 
+//TODO, CLEAN UP THE LOGIC
 const DUMMY_TODOS = [
-  { id: 1, text: "Learn React", completed: false },
+  { id: 1, text: "Learn React", completed: true },
   { id: 2, text: "Build a Todo App", completed: false },
 ];
 
 export default function TodosContainer() {
   const [todos, setTodos] = useState(DUMMY_TODOS);
   const [input, setInput] = useState("");
+  const [editInput, setEditInput] = useState("");
+
   const [isModalWarnOpen, setIsModalWarnOpen] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [todoToEdit, setTodoToEdit] = useState(null);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
+  //Add
   function addTodoHandler(e) {
     e.preventDefault();
     if (input.trim() === "") return;
@@ -20,10 +26,30 @@ export default function TodosContainer() {
     setInput("");
   }
 
-  function editTodHandler() {
-    return;
+  //Edit
+  function editTodoHandler(currentTodo) {
+    setTodoToEdit(currentTodo);
+    setEditInput(currentTodo.text);
+    setIsModalEditOpen(true);
   }
 
+  function cancelEditHandler() {
+    setTodoToEdit(null);
+    setIsModalEditOpen(false);
+  }
+
+  function confirmEditTodoHandler() {
+    const edittedTodo = { ...todoToEdit, text: editInput };
+    const newTodos = todos.map((todo) =>
+      todo.id === edittedTodo.id ? { ...todo, text: edittedTodo.text } : todo,
+    );
+
+    setTodos(newTodos);
+    setIsModalEditOpen(false);
+    setTodoToEdit(null);
+  }
+
+  //Delete
   function deleteTodoHandler(todoId) {
     setTodoToDelete(todoId);
     setIsModalWarnOpen(true);
@@ -42,6 +68,26 @@ export default function TodosContainer() {
 
   return (
     <>
+      {/* Edit modal */}
+      <Modal isOpen={isModalEditOpen} onClose={cancelEditHandler}>
+        <h2 className="mb-2 text-xl font-bold">Edit todo</h2>
+        <input
+          type="text"
+          className="flex-1 rounded-lg border border-slate-300 bg-white/70 p-2 shadow-sm backdrop-blur transition-colors duration-150 focus:border-violet-300 focus:outline-none dark:border-slate-700 dark:bg-slate-700/70 dark:text-slate-100 dark:focus:border-violet-800"
+          value={editInput}
+          onChange={(e) => setEditInput(e.target.value)}
+        />
+        <div className="mt-4 flex justify-end">
+          <button className="btn-confirm mr-2" onClick={confirmEditTodoHandler}>
+            Confirm
+          </button>
+          <button className="btn-neutral" onClick={cancelEditHandler}>
+            Cancel
+          </button>
+        </div>
+      </Modal>
+
+      {/* Delete modal */}
       <Modal isOpen={isModalWarnOpen} onClose={cancelDeleteHandler}>
         <h2 className="mb-2 text-xl font-bold">Warning</h2>
         <p>Are you sure you want to delete this todo?</p>
@@ -68,7 +114,11 @@ export default function TodosContainer() {
             placeholder="Add a todo..."
           />
 
-          <button type="submit" className="btn-primary">
+          <button
+            type="submit"
+            className="btn-primary"
+            disabled={!input.trim()}
+          >
             <span>Add</span>
           </button>
         </form>
@@ -81,8 +131,27 @@ export default function TodosContainer() {
               key={todo.id}
               className="my-2 flex items-center justify-between rounded-lg border border-white/30 bg-white/80 pl-3 pr-0 shadow backdrop-blur-md dark:border-white/10 dark:bg-slate-700/80"
             >
-              <span className="flex-1">{todo.text}</span>
-              <EditButton onClick={() => editTodHandler(todo.id)} />
+              <input
+                type="checkbox"
+                className="mr-2 h-4 w-4 accent-green-400 checked:border-green-900"
+                checked={todo.completed}
+                onClick={() => {
+                  setTodos(
+                    todos.map((t) =>
+                      t.id === todo.id ? { ...t, completed: !t.completed } : t,
+                    ),
+                  );
+                }}
+              />
+              <span
+                className={
+                  "min-w-0 flex-1 truncate pr-2" +
+                  (todo.completed ? " line-through" : "")
+                }
+              >
+                {todo.text}
+              </span>
+              <EditButton onClick={() => editTodoHandler(todo)} />
               <DeleteButton onClick={() => deleteTodoHandler(todo.id)} />
             </li>
           ))}
