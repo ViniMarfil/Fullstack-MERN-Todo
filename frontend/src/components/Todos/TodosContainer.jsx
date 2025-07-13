@@ -33,6 +33,7 @@ export default function TodosContainer() {
 
   // Confirm edit
   function confirmEditTodoHandler() {
+    if (editInput.trim() === "") return;
     setTodos(
       todos.map((todo) =>
         todo.id === todoToEdit.id ? { ...todo, text: editInput } : todo,
@@ -60,7 +61,11 @@ export default function TodosContainer() {
           onChange={(e) => setEditInput(e.target.value)}
         />
         <div className="mt-4 flex justify-end">
-          <button className="btn-confirm mr-2" onClick={confirmEditTodoHandler}>
+          <button
+            className="btn-confirm mr-2"
+            onClick={confirmEditTodoHandler}
+            disabled={!editInput.trim()}
+          >
             Confirm
           </button>
           <button className="btn-neutral" onClick={cancelEditHandler}>
