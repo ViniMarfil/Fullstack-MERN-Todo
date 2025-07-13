@@ -11,13 +11,10 @@ export default function TodosContainer() {
   const [todos, setTodos] = useState(DUMMY_TODOS);
   const [input, setInput] = useState("");
   const [editInput, setEditInput] = useState("");
-
-  const [isModalWarnOpen, setIsModalWarnOpen] = useState(false);
-  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [todoToEdit, setTodoToEdit] = useState(null);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
-  //Add
+  // Add
   function addTodoHandler(e) {
     e.preventDefault();
     if (input.trim() === "") return;
@@ -26,50 +23,35 @@ export default function TodosContainer() {
     setInput("");
   }
 
-  //Edit
-  function editTodoHandler(currentTodo) {
-    setTodoToEdit(currentTodo);
-    setEditInput(currentTodo.text);
-    setIsModalEditOpen(true);
+  function toggleTodoCompleted(todoId) {
+    setTodos((todos) =>
+      todos.map((todo) =>
+        todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
+      ),
+    );
   }
 
+  // Confirm edit
+  function confirmEditTodoHandler() {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === todoToEdit.id ? { ...todo, text: editInput } : todo,
+      ),
+    );
+    setTodoToEdit(null);
+    setEditInput("");
+  }
+
+  // Cancel edit
   function cancelEditHandler() {
     setTodoToEdit(null);
-    setIsModalEditOpen(false);
-  }
-
-  function confirmEditTodoHandler() {
-    const edittedTodo = { ...todoToEdit, text: editInput };
-    const newTodos = todos.map((todo) =>
-      todo.id === edittedTodo.id ? { ...todo, text: edittedTodo.text } : todo,
-    );
-
-    setTodos(newTodos);
-    setIsModalEditOpen(false);
-    setTodoToEdit(null);
-  }
-
-  //Delete
-  function deleteTodoHandler(todoId) {
-    setTodoToDelete(todoId);
-    setIsModalWarnOpen(true);
-  }
-
-  function confirmDeleteTodoHandler() {
-    setTodos(todos.filter((todo) => todo.id !== todoToDelete));
-    setIsModalWarnOpen(false);
-    setTodoToDelete(null);
-  }
-
-  function cancelDeleteHandler() {
-    setIsModalWarnOpen(false);
-    setTodoToDelete(null);
+    setEditInput("");
   }
 
   return (
     <>
       {/* Edit modal */}
-      <Modal isOpen={isModalEditOpen} onClose={cancelEditHandler}>
+      <Modal isOpen={!!todoToEdit} onClose={cancelEditHandler}>
         <h2 className="mb-2 text-xl font-bold">Edit todo</h2>
         <input
           type="text"
@@ -88,17 +70,20 @@ export default function TodosContainer() {
       </Modal>
 
       {/* Delete modal */}
-      <Modal isOpen={isModalWarnOpen} onClose={cancelDeleteHandler}>
+      <Modal isOpen={!!todoToDelete} onClose={() => setTodoToDelete(null)}>
         <h2 className="mb-2 text-xl font-bold">Warning</h2>
         <p>Are you sure you want to delete this todo?</p>
         <div className="mt-4 flex justify-end">
           <button
             className="btn-warning mr-2"
-            onClick={confirmDeleteTodoHandler}
+            onClick={() => {
+              setTodos(todos.filter((todo) => todo.id !== todoToDelete));
+              setTodoToDelete(null);
+            }}
           >
             Delete
           </button>
-          <button className="btn-neutral" onClick={cancelDeleteHandler}>
+          <button className="btn-neutral" onClick={() => setTodoToDelete(null)}>
             Cancel
           </button>
         </div>
@@ -136,13 +121,7 @@ export default function TodosContainer() {
                 type="checkbox"
                 className="mr-2 h-4 w-4 accent-green-400 checked:border-green-900"
                 checked={todo.completed}
-                onClick={() => {
-                  setTodos(
-                    todos.map((t) =>
-                      t.id === todo.id ? { ...t, completed: !t.completed } : t,
-                    ),
-                  );
-                }}
+                onClick={() => toggleTodoCompleted(todo.id)}
               />
               <span
                 className={
@@ -152,8 +131,13 @@ export default function TodosContainer() {
               >
                 {todo.text}
               </span>
-              <EditButton onClick={() => editTodoHandler(todo)} />
-              <DeleteButton onClick={() => deleteTodoHandler(todo.id)} />
+              <EditButton
+                onClick={() => {
+                  setTodoToEdit(todo);
+                  setEditInput(todo.text);
+                }}
+              />
+              <DeleteButton onClick={() => setTodoToDelete(todo.id)} />
             </li>
           ))}
         </ul>
