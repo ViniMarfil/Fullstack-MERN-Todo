@@ -52,10 +52,7 @@ export default function TodosContainer() {
           >
             Delete
           </button>
-          <button
-            className="btn-neutral"
-            onClick={cancelDeleteHandler}
-          >
+          <button className="btn-neutral" onClick={cancelDeleteHandler}>
             Cancel
           </button>
         </div>
@@ -65,7 +62,7 @@ export default function TodosContainer() {
         <h2 className="mb-4 text-center text-2xl font-bold">Todos</h2>
         <form onSubmit={addTodoHandler} className="mb-4 flex gap-2">
           <input
-            className="flex-1 rounded-lg border border-white/30 bg-white/60 p-2 shadow-[inset_2px_2px_8px_#cbd5e1,inset_-2px_-2px_8px_#fff] backdrop-blur-md focus:border-slate-400/40 focus:outline-none focus:ring-1 focus:ring-slate-300/30 dark:border-white/10 dark:bg-slate-700/60 dark:text-slate-100 dark:shadow-[inset_2px_2px_8px_#1e293b,inset_-2px_-2px_8px_#334155] dark:focus:border-white/10 dark:focus:ring-white/10"
+            className="flex-1 rounded-lg border border-slate-300 bg-white/70 p-2 shadow-sm backdrop-blur transition-colors duration-150 focus:border-violet-300 focus:outline-none dark:border-slate-700 dark:bg-slate-700/70 dark:text-slate-100 dark:focus:border-violet-800"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Add a todo..."
