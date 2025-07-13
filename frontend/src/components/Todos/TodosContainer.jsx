@@ -73,7 +73,7 @@ export default function TodosContainer() {
         <h2 className="mb-2 text-xl font-bold">Edit todo</h2>
         <input
           type="text"
-          className="flex-1 rounded-lg border border-slate-300 bg-white/70 p-2 shadow-sm backdrop-blur transition-colors duration-150 focus:border-violet-300 focus:outline-none dark:border-slate-700 dark:bg-slate-700/70 dark:text-slate-100 dark:focus:border-violet-800"
+          className="input-primary"
           value={editInput}
           onChange={(e) => setEditInput(e.target.value)}
         />
@@ -104,11 +104,12 @@ export default function TodosContainer() {
         </div>
       </Modal>
 
-      <div className="w-full max-w-md rounded-lg border border-white/30 bg-slate-200/50 p-6 shadow-lg backdrop-blur-3xl dark:border-white/10 dark:bg-slate-800/50">
+      {/* Main container */}
+      <div className="w-full max-w-lg rounded-lg border border-white/30 bg-slate-200/50 p-6 shadow-lg backdrop-blur-3xl dark:border-white/10 dark:bg-slate-800/50">
         <h2 className="mb-4 text-center text-2xl font-bold">Todos</h2>
         <form onSubmit={addTodoHandler} className="mb-4 flex gap-2">
           <input
-            className="flex-1 rounded-lg border border-slate-300 bg-white/70 p-2 shadow-sm backdrop-blur transition-colors duration-150 focus:border-violet-300 focus:outline-none dark:border-slate-700 dark:bg-slate-700/70 dark:text-slate-100 dark:focus:border-violet-800"
+            className="input-primary"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Add a todo..."
