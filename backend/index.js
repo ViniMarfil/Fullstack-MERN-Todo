@@ -1,9 +1,3 @@
-import {
-  checkIfIdExist,
-  validateTodoId,
-  validateTodoComplete,
-  validateTodoText,
-} from "./utils.js";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -15,13 +9,6 @@ const app = express();
 const PORT = 3001;
 app.use(express.json());
 app.use(cors());
-
-let newId = 3;
-const DUMMY_TODOS = [
-  { id: 1, text: "Learn React", completed: true },
-  { id: 2, text: "Build a Todo App", completed: false },
-];
-let todos = [...DUMMY_TODOS];
 
 app.get("/", (req, res) => {
   res.send("The backend is functional! You beautiful being!");
@@ -59,7 +46,7 @@ app.put("/todos/:id", async (req, res) => {
   if (!req.params.id) {
     return res.status(400).json({ error: "Todo id is required." });
   }
-  if (!validateTodoId(req.params.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid todo id." });
   }
   const { text, completed } = req.body;
@@ -85,7 +72,7 @@ app.put("/todos/:id", async (req, res) => {
 
 // Delete todo
 app.delete("/todos/:id", async (req, res) => {
-  if (!validateTodoId(req.params.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid todo id." });
   }
   const todo = await Todo.findByIdAndDelete(req.params.id);
