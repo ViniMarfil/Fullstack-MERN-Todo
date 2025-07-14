@@ -38,8 +38,6 @@ export default function TodosContainer() {
       setTodos([...todos, newTodo]);
       setInput("");
       await axios.post("http://localhost:3001/todos", newTodo);
-      const response = await axios.get("http://localhost:3001/todos");
-      setTodos(response.data || []);
     } catch (error) {
       console.error("Error adding todo:", error.message);
     }
@@ -52,32 +50,55 @@ export default function TodosContainer() {
       setTodos((todos) => todos.filter((todo) => todo.id !== todoId));
       setTodoToDelete(null);
       await axios.delete(`http://localhost:3001/todos/${todoId}`);
-      const response = await axios.get("http://localhost:3001/todos");
-      //Fetch update
-      setTodos(response.data || []);
     } catch (error) {
       console.error("Error deleting todo:", error.message);
     }
   }
 
-  function toggleTodoCompleted(todoId) {
-    setTodos((todos) =>
-      todos.map((todo) =>
+  //Update API
+  async function confirmEditTodoHandler() {
+    if (editInput.trim() === "") return;
+    try {
+      //Optimistic update
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === todoToEdit.id
+            ? { ...todo, text: editInput, completed: todoToEdit.completed }
+            : todo,
+        ),
+      );
+      setTodoToEdit(null);
+      setEditInput("");
+
+      // Send update to backend
+      await axios.put(`http://localhost:3001/todos/${todoToEdit.id}`, {
+        text: editInput,
+        completed: todoToEdit.completed,
+      });
+    } catch (error) {
+      console.error("Error editing todo:", error.message);
+    }
+  }
+
+  //Update API (toggle completed)
+  async function toggleTodoCompleted(todoId) {
+    //Optimistic update
+    setTodos((prev) =>
+      prev.map((todo) =>
         todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
       ),
     );
-  }
 
-  // Confirm edit
-  function confirmEditTodoHandler() {
-    if (editInput.trim() === "") return;
-    setTodos(
-      todos.map((todo) =>
-        todo.id === todoToEdit.id ? { ...todo, text: editInput } : todo,
-      ),
-    );
-    setTodoToEdit(null);
-    setEditInput("");
+    const todo = todos.find((t) => t.id === todoId);
+    if (!todo) return;
+    try {
+      await axios.put(`http://localhost:3001/todos/${todoId}`, {
+        text: todo.text,
+        completed: !todo.completed,
+      });
+    } catch (error) {
+      console.error("Error toggling todo:", error.message);
+    }
   }
 
   // Cancel edit
@@ -119,10 +140,6 @@ export default function TodosContainer() {
           <button
             className="btn-warning mr-2"
             onClick={() => deleteTodoHandler(todoToDelete.id)}
-            // onClick={() => {
-            //   setTodos(todos.filter((todo) => todo.id !== todoToDelete));
-            //   setTodoToDelete(null);
-            // }}
           >
             Delete
           </button>
