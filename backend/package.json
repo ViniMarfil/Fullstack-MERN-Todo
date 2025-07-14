@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "set NODE_OPTIONS=--experimental-vm-modules&& jest"
+    "test": "set NODE_OPTIONS=--experimental-vm-modules&& jest --config jest.config.js"
   },
   "devDependencies": {
     "jest": "^30.0.4",
