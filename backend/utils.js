@@ -1,8 +1,7 @@
+import mongoose from "mongoose";
+
 export function validateTodoId(todoId) {
-  if (isNaN(todoId)) {
-    return false;
-  }
-  return true;
+  return mongoose.Types.ObjectId.isValid(todoId);
 }
 
 export function checkIfIdExist(todos, todoId) {

@@ -6,6 +6,10 @@ import {
 } from "./utils.js";
 import express from "express";
 import cors from "cors";
+import mongoose from "mongoose";
+import Todo from "./database/Todo.js";
+
+mongoose.connect("mongodb://localhost:27017/todos");
 
 const app = express();
 const PORT = 3001;
@@ -23,74 +27,69 @@ app.get("/", (req, res) => {
   res.send("The backend is functional! You beautiful being!");
 });
 
-//Get all todos
-app.get("/todos", (req, res) => {
-  res.json(todos);
+// Get all todos
+app.get("/todos", async (req, res) => {
+  const todos = await Todo.find();
+  // Map _id to id for frontend compatibility
+  const todosWithId = todos.map((todo) => ({
+    id: todo._id,
+    text: todo.text,
+    completed: todo.completed,
+  }));
+  res.json(todosWithId);
 });
 
-//Add todo
-app.post("/todos", (req, res) => {
+// Add todo
+app.post("/todos", async (req, res) => {
   const { text } = req.body;
-
-  if (!validateTodoText(text)) {
+  if (!text || typeof text !== "string" || text.trim() === "") {
     return res.status(400).json({ error: "Todo 'text' is required." });
   }
-
-  const newTodo = { id: newId++, text: text, completed: false };
-  todos.push(newTodo);
-  res.status(201).json(newTodo);
+  const newTodo = await Todo.create({ text });
+  // Map _id to id for frontend compatibility
+  res.status(201).json({
+    id: newTodo._id,
+    text: newTodo.text,
+    completed: newTodo.completed,
+  });
 });
 
-//Edit todo
-app.put("/todos/:id", (req, res) => {
-  const todoId = parseInt(req.params.id);
-  const { text, completed } = req.body;
-
-  //Validate Id
-  if (!validateTodoId(todoId)) {
+// Edit todo
+app.put("/todos/:id", async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).json({ error: "Todo id is required." });
+  }
+  if (!validateTodoId(req.params.id)) {
     return res.status(400).json({ error: "Invalid todo id." });
   }
-
-  //Check if it exists
-  if (!checkIfIdExist(todos, todoId)) {
-    return res.status(404).json({ error: "Todo not found." });
-  }
-
-  //Validate text
-  if (!validateTodoText(text)) {
+  const { text, completed } = req.body;
+  const todo = await Todo.findById(req.params.id);
+  if (!todo) return res.status(404).json({ error: "Todo not found." });
+  if (!text || typeof text !== "string" || text.trim() === "") {
     return res.status(400).json({ error: "Todo 'text' is required." });
   }
-
-  //Validate complete
-  if (!validateTodoComplete(completed)) {
+  if (typeof completed !== "boolean") {
     return res
       .status(400)
       .json({ error: "'completed' must be true or false." });
   }
-
-  todos = todos.map((todo) =>
-    todo.id === todoId ? { ...todo, text, completed } : todo,
-  );
-
-  res.json({ id: todoId, text, completed });
+  todo.text = text;
+  todo.completed = completed;
+  await todo.save();
+  res.json({
+    id: todo._id,
+    text: todo.text,
+    completed: todo.completed,
+  });
 });
 
-//Delete todo
-app.delete("/todos/:id", (req, res) => {
-  const todoId = parseInt(req.params.id);
-
-  //Validate Id
-  if (!validateTodoId(todoId)) {
+// Delete todo
+app.delete("/todos/:id", async (req, res) => {
+  if (!validateTodoId(req.params.id)) {
     return res.status(400).json({ error: "Invalid todo id." });
   }
-
-  //Check if it exists
-  if (!checkIfIdExist(todos, todoId)) {
-    return res.status(404).json({ error: "Todo not found." });
-  }
-
-  //Finally, delete
-  todos = todos.filter((todo) => todo.id !== todoId);
+  const todo = await Todo.findByIdAndDelete(req.params.id);
+  if (!todo) return res.status(404).json({ error: "Todo not found." });
   res.status(204).end();
 });
 

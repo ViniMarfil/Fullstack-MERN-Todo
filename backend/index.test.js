@@ -1,5 +1,6 @@
 import request from "supertest";
 import app from "./index.js";
+import mongoose from "mongoose";
 
 describe("Todos API", () => {
   test("GET /todos returns all todos", async () => {
@@ -50,8 +51,10 @@ describe("Todos API", () => {
   });
 
   test("PUT /todos/:id with missing todo returns 404", async () => {
+    // Use a valid but non-existent ObjectId
+    const nonExistentId = "aaaaaaaaaaaaaaaaaaaaaaaa";
     const res = await request(app)
-      .put("/todos/99999")
+      .put(`/todos/${nonExistentId}`)
       .send({ text: "Updated", completed: true });
     expect(res.statusCode).toBe(404);
     expect(res.body.error).toBe("Todo not found.");
@@ -95,8 +98,13 @@ describe("Todos API", () => {
   });
 
   test("DELETE /todos/:id with missing todo returns 404", async () => {
-    const res = await request(app).delete("/todos/99999");
+    const nonExistentId = "aaaaaaaaaaaaaaaaaaaaaaaa";
+    const res = await request(app).delete(`/todos/${nonExistentId}`);
     expect(res.statusCode).toBe(404);
     expect(res.body.error).toBe("Todo not found.");
   });
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
 });
