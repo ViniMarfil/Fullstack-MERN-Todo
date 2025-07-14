@@ -1,11 +1,12 @@
 {
+  "type": "module",
   "dependencies": {
     "express": "^5.1.0"
   },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "set NODE_OPTIONS=--experimental-vm-modules&& jest"
   },
   "devDependencies": {
     "jest": "^30.0.4",
