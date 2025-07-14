@@ -3,7 +3,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import Todo from "./database/Todo.js";
 
-mongoose.connect("mongodb://localhost:27017/todos");
+const dbName = process.env.NODE_ENV === "test" ? "todos_test" : "todos";
+mongoose.connect(`mongodb://localhost:27017/${dbName}`);
 
 const app = express();
 const PORT = 3001;
