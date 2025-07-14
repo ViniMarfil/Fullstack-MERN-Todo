@@ -1,4 +1,4 @@
-# 🚀🔥 MERN Todo List 🚀🔥
+# 🚀🔥 Fullstack MERN todo 🚀🔥
 
 ![App Screenshot](assets/screenshot.png)
 
