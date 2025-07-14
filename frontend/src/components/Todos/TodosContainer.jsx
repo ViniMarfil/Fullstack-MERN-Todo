@@ -1,26 +1,63 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../Modal";
-
-//TODO, CLEAN UP THE LOGIC
-const DUMMY_TODOS = [
-  { id: 1, text: "Learn React", completed: true },
-  { id: 2, text: "Build a Todo App", completed: false },
-];
+import axios from "axios";
 
 export default function TodosContainer() {
-  const [todos, setTodos] = useState(DUMMY_TODOS);
+  const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
   const [editInput, setEditInput] = useState("");
   const [todoToEdit, setTodoToEdit] = useState(null);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
+  //Fetch the todos
+  useEffect(() => {
+    let isActive = true;
+
+    axios
+      .get("http://localhost:3001/todos")
+      .then((response) => {
+        if (isActive) {
+          setTodos(response.data || []);
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching todos:", error.message);
+      });
+
+    return () => (isActive = false);
+  }, []);
+
   // Add
-  function addTodoHandler(e) {
+  async function addTodoHandler(e) {
     e.preventDefault();
     if (input.trim() === "") return;
-    const newTodo = { id: Date.now(), text: input, completed: false };
-    setTodos([...todos, newTodo]);
-    setInput("");
+
+    try {
+      const newTodo = { id: Date.now(), text: input };
+      //Optimistic update
+      setTodos([...todos, newTodo]);
+      setInput("");
+      await axios.post("http://localhost:3001/todos", newTodo);
+      const response = await axios.get("http://localhost:3001/todos");
+      setTodos(response.data || []);
+    } catch (error) {
+      console.error("Error adding todo:", error.message);
+    }
+  }
+
+  //Delete API
+  async function deleteTodoHandler(todoId) {
+    try {
+      //Optimistic update
+      setTodos((todos) => todos.filter((todo) => todo.id !== todoId));
+      setTodoToDelete(null);
+      await axios.delete(`http://localhost:3001/todos/${todoId}`);
+      const response = await axios.get("http://localhost:3001/todos");
+      //Fetch update
+      setTodos(response.data || []);
+    } catch (error) {
+      console.error("Error deleting todo:", error.message);
+    }
   }
 
   function toggleTodoCompleted(todoId) {
@@ -81,10 +118,11 @@ export default function TodosContainer() {
         <div className="mt-4 flex justify-end">
           <button
             className="btn-warning mr-2"
-            onClick={() => {
-              setTodos(todos.filter((todo) => todo.id !== todoToDelete));
-              setTodoToDelete(null);
-            }}
+            onClick={() => deleteTodoHandler(todoToDelete.id)}
+            // onClick={() => {
+            //   setTodos(todos.filter((todo) => todo.id !== todoToDelete));
+            //   setTodoToDelete(null);
+            // }}
           >
             Delete
           </button>
@@ -126,7 +164,7 @@ export default function TodosContainer() {
                 type="checkbox"
                 className="mr-2 h-4 w-4 accent-green-400 checked:border-green-900"
                 checked={todo.completed}
-                onClick={() => toggleTodoCompleted(todo.id)}
+                onChange={() => toggleTodoCompleted(todo.id)}
               />
               <span
                 className={
@@ -142,7 +180,7 @@ export default function TodosContainer() {
                   setEditInput(todo.text);
                 }}
               />
-              <DeleteButton onClick={() => setTodoToDelete(todo.id)} />
+              <DeleteButton onClick={() => setTodoToDelete(todo)} />
             </li>
           ))}
         </ul>
