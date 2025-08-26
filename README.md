@@ -53,8 +53,8 @@ Includes **MongoDB** integration via **Docker** for easy local development and *
 ### 1. **Clone the repo**
 
 ```sh
-git clone https://github.com/ViniMarfil/Todo-mern-list.git
-cd todo-mern-list
+git clone https://github.com/ViniMarfil/Fullstack-MERN-Todo.git
+cd Fullstack-MERN-Todo
 ```
 
 ### 2. **Start MongoDB with Docker**
